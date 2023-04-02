@@ -1,3 +1,41 @@
+use bevy::{prelude::*, window::PresentMode};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
+
+mod camera;
+mod fps;
+
+#[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
+pub enum GameState {
+    #[default]
+    Startup,
+    MainMenu,
+    Playing,
+}
+
 fn main() {
-    println!("Hello, world!");
+    let mut app = App::new();
+
+    app.add_plugins(
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Wambology".into(),
+                    resolution: (1280.0, 720.0).into(),
+                    present_mode: PresentMode::AutoVsync,
+                    fit_canvas_to_parent: true,
+                    ..default()
+                }),
+                ..default()
+            })
+            .set(ImagePlugin::default_nearest()),
+    )
+    .insert_resource(ClearColor(Color::rgb(0.157, 0.157, 0.157)))
+    .add_plugin(WorldInspectorPlugin::default())
+    .add_state::<GameState>();
+    // .add_loading_state(LoadingState::new(GameState::Startup).continue_to_state(GameState::MainMenu))
+    
+    app.add_plugin(camera::CameraPlugin)
+        .add_plugin(fps::FpsPlugin);
+
+    app.run()
 }
