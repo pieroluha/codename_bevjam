@@ -3,7 +3,9 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 mod background;
 mod camera;
+mod creature;
 mod fps;
+mod player;
 
 #[derive(Debug, Clone, Copy, Default, Eq, PartialEq, Hash, States)]
 pub enum GameState {
@@ -37,7 +39,8 @@ fn main() {
 
     app.add_plugin(camera::CameraPlugin)
         .add_plugin(fps::FpsPlugin)
-        .add_plugin(background::BackgroundPlugin);
+        .add_plugin(background::BackgroundPlugin)
+        .add_plugins(creature::CreaturePlugins);
 
     app.run()
 }

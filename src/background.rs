@@ -44,8 +44,8 @@ fn build_background(mut cmds: Commands, mut imgs: ResMut<Assets<Image>>) {
         bg.copy_from(&part, 0, bg_y * X_SIZE).expect("Zamn");
     }
 
-    let bevy_bg = Image::from_dynamic(bg.into(), true);
-    let bg_handle = imgs.add(bevy_bg);
+    let bevy_image = Image::from_dynamic(bg.into(), true);
+    let bg_handle = imgs.add(bevy_image);
 
     cmds.spawn(SpriteBundle {
         texture: bg_handle,
