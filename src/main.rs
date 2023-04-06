@@ -1,6 +1,7 @@
 use bevy::{prelude::*, window::PresentMode};
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
+mod background;
 mod camera;
 mod fps;
 
@@ -20,7 +21,7 @@ fn main() {
             .set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Wambology".into(),
-                    resolution: (1280.0, 720.0).into(),
+                    resolution: (800.0, 800.0).into(),
                     present_mode: PresentMode::AutoVsync,
                     fit_canvas_to_parent: true,
                     ..default()
@@ -29,13 +30,14 @@ fn main() {
             })
             .set(ImagePlugin::default_nearest()),
     )
-    .insert_resource(ClearColor(Color::rgb(0.157, 0.157, 0.157)))
+    .insert_resource(ClearColor(Color::hex("#0c0d0c").unwrap()))
     .add_plugin(WorldInspectorPlugin::default())
     .add_state::<GameState>();
     // .add_loading_state(LoadingState::new(GameState::Startup).continue_to_state(GameState::MainMenu))
-    
+
     app.add_plugin(camera::CameraPlugin)
-        .add_plugin(fps::FpsPlugin);
+        .add_plugin(fps::FpsPlugin)
+        .add_plugin(background::BackgroundPlugin);
 
     app.run()
 }
