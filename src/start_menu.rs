@@ -4,35 +4,36 @@ use bevy::prelude::*;
 pub struct StartMenuPlugin;
 impl Plugin for StartMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(start_menu.in_schedule(OnEnter(GameState::StartMenu)));
+        app.add_system(start_menu.in_schedule(OnEnter(GameState::StartMenu)))
+            .init_resource::<TimeColors>()
+            .add_system(epileptic_time.in_set(OnUpdate(GameState::StartMenu)))
+            .add_system(new_game_button.in_set(OnUpdate(GameState::StartMenu)));
     }
 }
 
+#[derive(Component)]
+struct UiTextTime {
+    duration: f32,
+    elapsed_time: f32,
+}
+impl Default for UiTextTime {
+    fn default() -> Self {
+        Self {
+            duration: 0.5,
+            elapsed_time: 0.0,
+        }
+    }
+}
+
+#[derive(Component)]
+struct UiButtNewGame;
+#[derive(Component)]
+struct UiButtLoadGame;
+
 fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
-    // cmds.spawn((
-    //     // Create a TextBundle that has a Text with a single section.
-    //     TextBundle::from_section(
-    //         // Accepts a `String` or any type that converts into a `String`, such as `&str`
-    //         "Ender\nof\nTime",
-    //         TextStyle {
-    //             font: fonts.slk_norm.clone(),
-    //             font_size: 80.0,
-    //             color: Color::WHITE,
-    //         },
-    //     ) // Set the alignment of the Text
-    //     .with_text_alignment(TextAlignment::Center)
-    //     // Set the style of the TextBundle itself.
-    //     .with_style(Style {
-    //         position_type: PositionType::Absolute,
-    //         // position: UiRect {
-    //         //     left: Val::Percent(40.0),
-    //         //     top: Val::Percent(20.0),
-    //         //     ..default()
-    //         // },
-    //         margin: UiRect::all(Val::Auto),
-    //         ..default()
-    //     }),
-    // ));
+    let red = Color::hex("#a62219").unwrap();
+    let white = Color::hex("#e5e5e6").unwrap();
+    let gray = Color::hex("#6e6d73").unwrap();
 
     cmds.spawn(NodeBundle {
         style: Style {
@@ -46,18 +47,18 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         ..Default::default()
     })
     //###
-    //### TITLE
+    //### ENDER
     //###
     .with_children(|ui| {
         ui.spawn(
             // Create a TextBundle that has a Text with a single section.
             TextBundle::from_section(
                 // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "Ender\nof\nTime",
+                "Ender",
                 TextStyle {
                     font: fonts.slk_norm.clone(),
                     font_size: 80.0,
-                    color: Color::WHITE,
+                    color: red,
                 },
             ) // Set the alignment of the Text
             .with_text_alignment(TextAlignment::Center)
@@ -71,14 +72,63 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                 // },
                 // margin: UiRect::all(Val::Auto),
                 margin: UiRect {
-                    left: Val::Auto,
-                    right: Val::Auto,
                     top: Val::Percent(8.0),
-                    bottom: Val::Percent(2.0),
+                    ..default()
                 },
                 ..default()
             }),
         );
+    })
+    //###
+    //### OF
+    //###
+    .with_children(|ui| {
+        ui.spawn(
+            // Create a TextBundle that has a Text with a single section.
+            TextBundle::from_section(
+                // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                "OF",
+                TextStyle {
+                    font: fonts.slk_norm.clone(),
+                    font_size: 80.0,
+                    color: white,
+                },
+            ) // Set the alignment of the Text
+            .with_text_alignment(TextAlignment::Center)
+            // Set the style of the TextBundle itself.
+            .with_style(Style {
+                position_type: PositionType::Relative,
+                ..default()
+            }),
+        );
+    })
+    //###
+    //### TIME
+    //###
+    .with_children(|ui| {
+        ui.spawn(
+            // Create a TextBundle that has a Text with a single section.
+            TextBundle::from_section(
+                // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                "TIME",
+                TextStyle {
+                    font: fonts.slk_norm.clone(),
+                    font_size: 80.0,
+                    color: gray,
+                },
+            ) // Set the alignment of the Text
+            .with_text_alignment(TextAlignment::Center)
+            // Set the style of the TextBundle itself.
+            .with_style(Style {
+                position_type: PositionType::Relative,
+                margin: UiRect {
+                    bottom: Val::Percent(2.0),
+                    ..default()
+                },
+                ..default()
+            }),
+        )
+        .insert(UiTextTime::default());
     })
     //###
     //### NEW GAME BUTTON
@@ -95,7 +145,9 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
             },
             background_color: BackgroundColor(Color::NONE),
             ..default()
-        }) // NG BUTTON TEXT
+        })
+        .insert(UiButtNewGame)
+        // NG BUTTON TEXT
         .with_children(|ui| {
             ui.spawn(
                 TextBundle::from_section(
@@ -104,7 +156,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                     TextStyle {
                         font: fonts.slk_norm.clone(),
                         font_size: 32.0,
-                        color: Color::WHITE,
+                        color: white,
                     },
                 ) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::Center),
@@ -126,7 +178,9 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
             },
             background_color: BackgroundColor(Color::NONE),
             ..default()
-        }) // LG BUTTON TEXT
+        })
+        .insert(UiButtLoadGame)
+        // LG BUTTON TEXT
         .with_children(|ui| {
             ui.spawn(
                 TextBundle::from_section(
@@ -135,7 +189,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                     TextStyle {
                         font: fonts.slk_norm.clone(),
                         font_size: 32.0,
-                        color: Color::WHITE,
+                        color: white,
                     },
                 ) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::Center),
@@ -143,3 +197,64 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         });
     });
 }
+
+#[derive(Resource)]
+struct TimeColors([Color; 5]);
+impl Default for TimeColors {
+    fn default() -> Self {
+        Self([
+            Color::hex("#303840").unwrap(),
+            Color::hex("#3d424d").unwrap(),
+            Color::hex("#4b4d57").unwrap(),
+            Color::hex("#5d5d66").unwrap(),
+            Color::hex("#6e6d73").unwrap(),
+        ])
+    }
+}
+
+fn epileptic_time(
+    time: Res<Time>,
+    time_colors: Res<TimeColors>,
+    mut que_ui_time: Query<(&mut Text, &mut UiTextTime)>,
+) {
+    let (mut text, mut text_time) = que_ui_time.single_mut();
+
+    text_time.elapsed_time += time.delta_seconds();
+
+    if text_time.elapsed_time > text_time.duration {
+        let idx = fastrand::usize(..time_colors.0.len());
+        text.sections[0].style.color = time_colors.0[idx];
+        text_time.elapsed_time = 0.0;
+    }
+}
+
+fn new_game_button(
+    mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<UiButtNewGame>)>,
+) {
+    for interaction in interaction_query.iter() {
+        match interaction {
+            Interaction::None => (),
+            Interaction::Clicked => println!("Clicked new butt!"),
+            Interaction::Hovered => (),
+        };
+    }
+}
+
+// fn lerp_color(start: Color, end: Color, t: f32) -> Color {
+//     let a = start.as_rgba_f32();
+//     let b = end.as_rgba_f32();
+
+//     let sum = [
+//         a[0] + (b[0] - a[0]) * t,
+//         a[1] + (b[1] - a[1]) * t,
+//         a[2] + (b[2] - a[2]) * t,
+//         a[3] + (b[3] - a[3]) * t,
+//     ];
+
+//     Color::Rgba {
+//         red: sum[0],
+//         green: sum[1],
+//         blue: sum[2],
+//         alpha: sum[3],
+//     }
+// }
