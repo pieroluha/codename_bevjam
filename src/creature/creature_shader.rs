@@ -10,7 +10,8 @@ use bevy::{
 pub struct CreatureShaderPlugin;
 impl Plugin for CreatureShaderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(Material2dPlugin::<CreatureMaterial>::default());
+        app.add_plugin(Material2dPlugin::<CreatureMaterial>::default())
+            .add_startup_system(init_creature_mesh);
     }
 }
 
@@ -33,7 +34,7 @@ impl Material2d for CreatureMaterial {
 }
 
 impl CreatureMaterial {
-    pub fn new(cre_type: CreatureFaction, img_handle: Handle<Image>) -> Self {
+    pub fn new(cre_fac: CreatureFaction, img_handle: Handle<Image>) -> Self {
         let player_colors = [
             Color::hex("#9a0e0e").unwrap(),
             Color::hex("#a62219").unwrap(),
@@ -50,7 +51,7 @@ impl CreatureMaterial {
             Color::hex("#6e6d73").unwrap(),
         ];
 
-        let colors = if cre_type == CreatureFaction::Player {
+        let colors = if cre_fac == CreatureFaction::Player {
             player_colors
         } else {
             enemy_colors
@@ -75,5 +76,13 @@ impl CreatureMaterial {
 
 #[derive(Component)]
 pub struct CreatureMaterialHandle(pub Handle<CreatureMaterial>);
+
+#[derive(Resource)]
+pub struct CreatureMesh(pub Handle<Mesh>);
+
+fn init_creature_mesh(mut mshs: ResMut<Assets<Mesh>>, mut cmds: Commands) {
+    let mesh = mshs.add(Mesh::from(shape::Quad::default()));
+    cmds.insert_resource(CreatureMesh(mesh));
+}
 
 // TODO: Events: Death shader, random color shader

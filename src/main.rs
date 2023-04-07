@@ -47,6 +47,7 @@ fn main() {
         .add_plugin(fps::FpsPlugin)
         .add_plugin(background::BackgroundPlugin)
         .add_plugins(creature::CreaturePlugins);
+        // .add_plugin(player::PlayerPlugin);
 
     app.run()
 }

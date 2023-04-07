@@ -11,7 +11,7 @@ mod creature_shader;
 
 pub use creature_assets::CreatureAssets;
 pub use creature_bundle::CreatureBundle;
-pub use creature_shader::CreatureMaterialHandle;
+pub use creature_shader::{CreatureMaterialHandle, CreatureMaterial, CreatureMesh};
 
 pub struct CreaturePlugins;
 impl PluginGroup for CreaturePlugins {
