@@ -1,4 +1,4 @@
-use crate::GameState;
+use crate::{GameState, WIN_HEIGHT};
 use bevy::{prelude::*, render::camera::ScalingMode};
 use bevy_pancam::{PanCam, PanCamPlugin};
 
@@ -17,7 +17,7 @@ fn spawn_camera(mut commands: Commands) {
     commands
         .spawn(Camera2dBundle {
             projection: OrthographicProjection {
-                scaling_mode: ScalingMode::FixedVertical(512.0),
+                scaling_mode: ScalingMode::FixedVertical(WIN_HEIGHT / 2.0),
                 ..default()
             },
             ..default()
@@ -32,9 +32,3 @@ fn spawn_camera(mut commands: Commands) {
             ..default()
         });
 }
-
-// fn camera_settings(mut que_cam: Query<&mut OrthographicProjection, With<MainCamera>>) {
-//     let mut cam_proj = que_cam.single_mut();
-
-//     cam_proj.scaling_mode = ScalingMode::FixedVertical(800.0);
-// }

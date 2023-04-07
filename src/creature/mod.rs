@@ -5,16 +5,36 @@ use bevy::{
     // prelude::{Component, PluginGroup},
 };
 
+mod creature_assets;
 mod creature_bundle;
 mod creature_shader;
+
+pub use creature_assets::CreatureAssets;
+pub use creature_bundle::CreatureBundle;
+pub use creature_shader::CreatureMaterialHandle;
 
 pub struct CreaturePlugins;
 impl PluginGroup for CreaturePlugins {
     fn build(self) -> PluginGroupBuilder {
         PluginGroupBuilder::start::<Self>()
+            .add(creature_assets::CreatureAssetsPlugin)
             .add(creature_shader::CreatureShaderPlugin)
             .add(TestSpawnPlugin)
     }
+}
+
+// pub enum CreatureType {
+//     PlayerBase,
+//     PlayerAttacker,
+//     PlayerDefender,
+//     Attacker,
+//     Defender,
+// }
+
+#[derive(PartialEq, Eq)]
+pub enum CreatureFaction {
+    Player,
+    Enemy,
 }
 
 pub struct TestSpawnPlugin;
@@ -33,10 +53,10 @@ fn spawn_creature(
     let mesh = mshs.add(Mesh::from(shape::Quad::default()));
     let img_handle = ass_srv.load("graphics/monalisa.png");
 
-    let material = mats.add(creature_shader::CreatureMaterial {
-        color: Color::RED,
-        base: img_handle.clone(),
-    });
+    let material = mats.add(creature_shader::CreatureMaterial::new(
+        CreatureFaction::Player,
+        img_handle,
+    ));
 
     let mat_handle = material.clone();
 

@@ -1,7 +1,8 @@
 #import bevy_sprite::mesh2d_view_bindings
 
 struct CreatureMaterial {
-    color: vec4<f32>,
+    colors: array<vec4<f32>, 5>,
+    index: i32,
 };
 
 @group(1) @binding(0)
@@ -15,7 +16,6 @@ var base_sampler: sampler;
 fn fragment(
     #import bevy_sprite::mesh2d_vertex_output
 ) -> @location(0) vec4<f32> {
-    var t_base = textureSample(base, base_sampler, uv);
-
+    var t_base = textureSample(base, base_sampler, uv) * mat.colors[mat.index];
     return t_base;
 }

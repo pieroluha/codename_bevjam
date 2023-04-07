@@ -9,7 +9,7 @@ impl Plugin for BackgroundPlugin {
     }
 }
 
-const X_SIZE: u32 = 512;
+const X_SIZE: u32 = 1024;
 const VERTICAL_COUNT: u32 = 4;
 
 fn build_background(mut cmds: Commands, mut imgs: ResMut<Assets<Image>>) {

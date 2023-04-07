@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::creature::CreatureBundle;
 
 pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
@@ -6,5 +7,8 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-// fn spawn_player() {
+#[derive(Component)]
+pub struct Player;
+
+// fn spawn_player(mut cmds: Commands, ) {
 // }
