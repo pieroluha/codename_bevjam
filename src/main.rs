@@ -7,6 +7,7 @@ mod camera;
 mod creature;
 mod fps;
 mod player;
+mod start_menu;
 
 pub const WIN_WIDTH: f32 = 1280.0;
 pub const WIN_HEIGHT: f32 = 720.0;
@@ -15,7 +16,7 @@ pub const WIN_HEIGHT: f32 = 720.0;
 pub enum GameState {
     #[default]
     Startup,
-    MainMenu,
+    StartMenu,
     Playing,
 }
 
@@ -40,14 +41,24 @@ fn main() {
     .add_plugin(WorldInspectorPlugin::default())
     .add_state::<GameState>()
     .add_loading_state(
-        LoadingState::new(GameState::Startup).continue_to_state(GameState::MainMenu),
-    );
+        LoadingState::new(GameState::Startup).continue_to_state(GameState::StartMenu),
+    )
+    .add_collection_to_loading_state::<_, FontAssets>(GameState::Startup);
 
     app.add_plugin(camera::CameraPlugin)
         .add_plugin(fps::FpsPlugin)
+        .add_plugin(start_menu::StartMenuPlugin)
         .add_plugin(background::BackgroundPlugin)
         .add_plugins(creature::CreaturePlugins);
-        // .add_plugin(player::PlayerPlugin);
+    // .add_plugin(player::PlayerPlugin);
 
     app.run()
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct FontAssets {
+    #[asset(path = "fonts/slkscr.ttf")]
+    pub slk_norm: Handle<Font>,
+    #[asset(path = "fonts/slkscrb.ttf")]
+    pub slk_bold: Handle<Font>,
 }

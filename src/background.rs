@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use image::{Rgba, RgbaImage};
-// use noisy_bevy::{simplex_noise_2d, NoisyShaderPlugin};
 
 pub struct BackgroundPlugin;
 impl Plugin for BackgroundPlugin {
@@ -38,7 +37,7 @@ fn build_background(mut cmds: Commands, mut imgs: ResMut<Assets<Image>>) {
         }
     }
 
-    let bevy_image = Image::from_dynamic(bg_rgba.into(), true);
+    let bevy_image = bevy::prelude::Image::from_dynamic(bg_rgba.into(), true);
     let bg_handle = imgs.add(bevy_image);
 
     cmds.spawn(SpriteBundle {
