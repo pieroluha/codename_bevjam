@@ -7,9 +7,13 @@ impl Plugin for StartMenuPlugin {
         app.add_system(start_menu.in_schedule(OnEnter(GameState::StartMenu)))
             .init_resource::<TimeColors>()
             .add_system(epileptic_time.in_set(OnUpdate(GameState::StartMenu)))
-            .add_system(new_game_button.in_set(OnUpdate(GameState::StartMenu)));
+            .add_system(sm_button_logic.in_set(OnUpdate(GameState::StartMenu)))
+            .add_system(clean_up_sm.in_schedule(OnExit(GameState::StartMenu)));
     }
 }
+
+#[derive(Component)]
+struct StartMenu;
 
 #[derive(Component)]
 struct UiTextTime {
@@ -24,11 +28,14 @@ impl Default for UiTextTime {
         }
     }
 }
-
+enum ButtType {
+    NewGame,
+    LoadGame,
+}
 #[derive(Component)]
-struct UiButtNewGame;
+struct StartMenuButton(ButtType);
 #[derive(Component)]
-struct UiButtLoadGame;
+struct StartMenuText(String);
 
 fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
     let red = Color::hex("#a62219").unwrap();
@@ -46,6 +53,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         // background_color: BackgroundColor(Color::BLACK),
         ..Default::default()
     })
+    .insert(StartMenu)
     //###
     //### ENDER
     //###
@@ -146,7 +154,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
             background_color: BackgroundColor(Color::NONE),
             ..default()
         })
-        .insert(UiButtNewGame)
+        .insert(StartMenuButton(ButtType::NewGame))
         // NG BUTTON TEXT
         .with_children(|ui| {
             ui.spawn(
@@ -160,7 +168,8 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                     },
                 ) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::Center),
-            );
+            )
+            .insert(StartMenuText("NewGame".to_string()));
         });
     })
     //###
@@ -179,7 +188,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
             background_color: BackgroundColor(Color::NONE),
             ..default()
         })
-        .insert(UiButtLoadGame)
+        .insert(StartMenuButton(ButtType::LoadGame))
         // LG BUTTON TEXT
         .with_children(|ui| {
             ui.spawn(
@@ -193,7 +202,8 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                     },
                 ) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::Center),
-            );
+            )
+            .insert(StartMenuText("LoadGame".to_string()));
         });
     });
 }
@@ -228,16 +238,49 @@ fn epileptic_time(
     }
 }
 
-fn new_game_button(
-    mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<UiButtNewGame>)>,
+fn sm_button_logic(
+    que_interaction: Query<(&Interaction, &StartMenuButton), Changed<Interaction>>,
+    mut que_butt_texts: Query<(&StartMenuText, &mut Text)>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
-    for interaction in interaction_query.iter() {
+    for (interaction, butt_type) in que_interaction.iter() {
         match interaction {
-            Interaction::None => (),
-            Interaction::Clicked => println!("Clicked new butt!"),
-            Interaction::Hovered => (),
+            Interaction::None => {
+                for (_, mut text) in que_butt_texts.iter_mut() {
+                    text.sections[0].style.color = Color::hex("#e5e5e6").unwrap();
+                }
+            }
+            Interaction::Clicked => match butt_type.0 {
+                ButtType::NewGame => next_state.set(GameState::Playing),
+                ButtType::LoadGame => {
+                    println!("Load Game clicked!");
+                }
+            },
+            Interaction::Hovered => match butt_type.0 {
+                ButtType::NewGame => {
+                    for (bt, mut text) in que_butt_texts.iter_mut() {
+                        if bt.0 == "NewGame" {
+                            text.sections[0].style.color = Color::hex("#a62219").unwrap();
+                        }
+                    }
+                }
+                ButtType::LoadGame => {
+                    for (bt, mut text) in que_butt_texts.iter_mut() {
+                        if bt.0 == "LoadGame" {
+                            text.sections[0].style.color = Color::hex("#a62219").unwrap();
+                        }
+                    }
+                }
+            },
         };
     }
+}
+
+fn clean_up_sm(que_start_menu: Query<Entity, With<StartMenu>>, mut cmds: Commands) {
+    let start_menu = que_start_menu.single();
+    cmds.get_entity(start_menu)
+        .expect("[ERROR]: No StartMenu entity found")
+        .despawn_recursive();
 }
 
 // fn lerp_color(start: Color, end: Color, t: f32) -> Color {
