@@ -16,21 +16,14 @@ fn player_movement(
     let (mut trans, speed, action) = que_player.single_mut();
 
     let pressed = action.get_pressed();
-
-    let mut move_dir = Vec2::ZERO;
     for key in pressed.iter() {
-        if key == &PlayerAction::MoveUp {
-            move_dir = Vec2::Y;
-        }
-        if key == &PlayerAction::MoveDown {
-            move_dir = -Vec2::Y;
-        }
-        if key == &PlayerAction::MoveLeft {
-            move_dir = -Vec2::X;
-        }
-        if key == &PlayerAction::MoveRight {
-            move_dir = Vec2::X;
-        }
+        let move_dir = match key {
+            PlayerAction::MoveUp => Vec2::Y,
+            PlayerAction::MoveDown => -Vec2::Y,
+            PlayerAction::MoveLeft => -Vec2::X,
+            PlayerAction::MoveRight => Vec2::X,
+            _ => Vec2::ZERO,
+        };
 
         let vel = move_dir * speed.0 * time.delta_seconds();
         trans.translation += vel.extend(0.0);
