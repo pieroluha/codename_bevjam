@@ -7,6 +7,8 @@ mod camera;
 mod creature;
 mod fps;
 mod player;
+mod player_controller;
+mod potions;
 mod start_menu;
 
 pub const WIN_WIDTH: f32 = 1280.0;
@@ -17,7 +19,10 @@ pub enum GameState {
     #[default]
     Startup,
     StartMenu,
+    InitNew,
+    InitLoad,
     Playing,
+    Paused,
 }
 
 fn main() {
@@ -49,8 +54,9 @@ fn main() {
         .add_plugin(fps::FpsPlugin)
         .add_plugin(start_menu::StartMenuPlugin)
         .add_plugin(background::BackgroundPlugin)
-        .add_plugins(creature::CreaturePlugins);
-    // .add_plugin(player::PlayerPlugin);
+        .add_plugins(creature::CreaturePlugins)
+        .add_plugin(player::PlayerPlugin)
+        .add_plugin(player_controller::PlayerControllerPlugin);
 
     app.run()
 }
