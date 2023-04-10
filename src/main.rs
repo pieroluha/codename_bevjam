@@ -5,6 +5,7 @@ use bevy_rapier2d::prelude::*;
 
 mod background;
 mod camera;
+mod collision;
 mod creature;
 mod enemy;
 mod fps;
@@ -26,6 +27,7 @@ pub enum GameState {
     InitLoad,
     Playing,
     Paused,
+    GameOver,
 }
 
 // #[derive(Resource, Default)]
@@ -69,7 +71,8 @@ fn main() {
         .add_plugins(creature::CreaturePlugins)
         .add_plugin(player::PlayerPlugin)
         .add_plugin(player_controller::PlayerControllerPlugin)
-        .add_plugin(enemy::EnemyPlugin);
+        .add_plugin(enemy::EnemyPlugin)
+        .add_plugin(collision::CollisionPlugin);
 
     app.add_system(no_gravity.in_schedule(OnEnter(GameState::StartMenu)));
 
@@ -87,3 +90,8 @@ pub struct FontAssets {
 fn no_gravity(mut rapier_config: ResMut<RapierConfiguration>) {
     rapier_config.gravity = Vec2::ZERO;
 }
+
+pub fn get_direction(from: Vec2, to: Vec2) -> Vec2 {
+    (to - from).normalize()
+}
+

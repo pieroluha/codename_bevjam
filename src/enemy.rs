@@ -1,6 +1,6 @@
 use crate::creature::{stats::*, CreatureAssets, EnemyBundle};
 use crate::player::Player;
-use crate::GameState;
+use crate::{GameState, get_direction};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
@@ -138,7 +138,6 @@ fn count_enemies(que_enemies: Query<&Enemy>, mut enemy_count: ResMut<EnemyCount>
 }
 
 fn hunt_player(
-    time: Res<Time>,
     que_player: Query<&Transform, (With<Player>, Without<Enemy>)>,
     mut que_enemies: Query<(&mut Velocity, &Transform,  &Speed), (With<Enemy>, Without<Player>)>,
 ) {
@@ -158,6 +157,3 @@ fn hunt_player(
     // trans.translation += vel.extend(0.0);
 }
 
-fn get_direction(from: Vec2, to: Vec2) -> Vec2 {
-    (to - from).normalize()
-}

@@ -6,6 +6,7 @@ use bevy::{
 mod creature_anim;
 mod creature_assets;
 mod creature_bundle;
+mod creature_death;
 // mod creature_shader;
 
 pub const CRE_SIZE: f32 = 16.0;
@@ -17,7 +18,7 @@ pub mod stats {
 }
 
 pub use creature_assets::CreatureAssets;
-pub use creature_bundle::{CreatureBundle, EnemyBundle};
+pub use creature_bundle::{CreatureBundle, EnemyBundle, Creature};
 // pub use creature_shader::{CreatureMaterial, CreatureMaterialHandle, CreatureMesh};
 
 pub struct CreaturePlugins;
@@ -26,6 +27,7 @@ impl PluginGroup for CreaturePlugins {
         PluginGroupBuilder::start::<Self>()
             .add(creature_assets::CreatureAssetsPlugin)
             .add(creature_anim::CreatureAnimPlugin)
+            .add(creature_death::CreatureDeathPlugin)
     }
 }
 
