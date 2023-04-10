@@ -1,8 +1,7 @@
-use crate::creature::{
-    stats::*, CreatureAssets, CreatureBundle, CreatureFaction, CreatureMaterial, CreatureMesh,
-};
+use crate::creature::{stats::*, CreatureAssets, CreatureBundle, CRE_SIZE};
 use crate::GameState;
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 pub struct PlayerPlugin;
@@ -25,21 +24,10 @@ pub enum PlayerAction {
     Cast,
 }
 
-fn spawn_player(
-    cre_ass: Res<CreatureAssets>,
-    cre_mesh: Res<CreatureMesh>,
-    mut cmds: Commands,
-    mut mats: ResMut<Assets<CreatureMaterial>>,
-) {
-    let mat_handle = mats.add(CreatureMaterial::new(
-        CreatureFaction::Player,
-        cre_ass.player.clone(),
-    ));
-
-    let mesh2d_bundle = MaterialMesh2dBundle {
-        mesh: cre_mesh.0.clone().into(),
-        material: mat_handle.clone(),
-        transform: Transform::default().with_scale(Vec3::new(32.0, 32.0, 1.0)),
+fn spawn_player(cre_ass: Res<CreatureAssets>, mut cmds: Commands) {
+    let sprite_sheet = SpriteSheetBundle {
+        texture_atlas: cre_ass.player.clone(),
+        sprite: TextureAtlasSprite::new(0),
         ..default()
     };
 
@@ -61,10 +49,10 @@ fn spawn_player(
         0.2,
         10.0,
         10.0,
-        mat_handle,
-        mesh2d_bundle,
+        sprite_sheet,
     ))
     .insert(Player)
+    .insert(Collider::cuboid(CRE_SIZE / 2.0, CRE_SIZE / 2.0))
     .insert(InputManagerBundle {
         action_state: ActionState::default(),
         input_map,

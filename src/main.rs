@@ -1,6 +1,7 @@
 use bevy::{prelude::*, window::PresentMode};
 use bevy_asset_loader::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+use bevy_rapier2d::prelude::*;
 
 mod background;
 mod camera;
@@ -10,6 +11,7 @@ mod player;
 mod player_controller;
 mod potions;
 mod start_menu;
+mod projectile;
 
 pub const WIN_WIDTH: f32 = 1280.0;
 pub const WIN_HEIGHT: f32 = 720.0;
@@ -24,6 +26,13 @@ pub enum GameState {
     Playing,
     Paused,
 }
+
+// #[derive(Resource, Default)]
+// pub struct InitNewStatus {
+//     background_ok: bool,
+//     player_ok: bool,
+//     enemy_ok: bool,
+// }
 
 fn main() {
     let mut app = App::new();
@@ -50,7 +59,10 @@ fn main() {
     )
     .add_collection_to_loading_state::<_, FontAssets>(GameState::Startup);
 
-    app.add_plugin(camera::CameraPlugin)
+    app
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        .add_plugin(RapierDebugRenderPlugin::default())
+        .add_plugin(camera::CameraPlugin)
         .add_plugin(fps::FpsPlugin)
         .add_plugin(start_menu::StartMenuPlugin)
         .add_plugin(background::BackgroundPlugin)

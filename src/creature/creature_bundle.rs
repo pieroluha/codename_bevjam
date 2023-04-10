@@ -1,7 +1,5 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
-use super::creature_shader;
-
 #[derive(Component)]
 pub struct Creature;
 
@@ -30,9 +28,8 @@ pub struct CreatureBundle {
     pub mana_regen: ManaRegen,
     pub phys_dam: PhysicalDamage,
     pub mag_dam: MagicalDamage,
-    pub mat_handle: creature_shader::CreatureMaterialHandle,
     #[bundle]
-    pub mesh2d_bundle: MaterialMesh2dBundle<creature_shader::CreatureMaterial>,
+    pub sprite_sheet: SpriteSheetBundle,
 }
 impl CreatureBundle {
     pub fn new(
@@ -43,8 +40,7 @@ impl CreatureBundle {
         mr: f32,
         pd: f32,
         md: f32,
-        mat_handle: Handle<creature_shader::CreatureMaterial>,
-        mesh2d_bundle: MaterialMesh2dBundle<creature_shader::CreatureMaterial>,
+        sprite_sheet: SpriteSheetBundle,
     ) -> Self {
         Self {
             marker: Creature,
@@ -55,8 +51,7 @@ impl CreatureBundle {
             mana_regen: ManaRegen(mr),
             phys_dam: PhysicalDamage(pd),
             mag_dam: MagicalDamage(md),
-            mat_handle: creature_shader::CreatureMaterialHandle(mat_handle),
-            mesh2d_bundle,
+            sprite_sheet,
         }
     }
 }

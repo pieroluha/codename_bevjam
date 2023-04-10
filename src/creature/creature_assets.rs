@@ -11,10 +11,10 @@ impl Plugin for CreatureAssetsPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct CreatureAssets {
-    #[asset(path = "graphics/monalisa.png")]
-    pub player: Handle<Image>,
-    #[asset(path = "graphics/frog_crab.png")]
-    pub attacker: Handle<Image>,
-    #[asset(path = "graphics/bible_accurate_angel.png")]
-    pub defender: Handle<Image>,
+    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 2, rows = 1))]
+    #[asset(path = "graphics/shroom_guy.png")]
+    pub player: Handle<TextureAtlas>,
+    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 2, rows = 1))]
+    #[asset(path = "graphics/mastahpiece.png")]
+    pub enemy: Handle<TextureAtlas>,
 }

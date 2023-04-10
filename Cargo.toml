@@ -35,6 +35,8 @@ default = [
     #
     "bevy_kira_audio/ogg",
     "bevy_kira_audio/wav",
+    #
+    "bevy_asset_loader/2d",
 ]
 
 [dependencies]
@@ -46,8 +48,8 @@ bevy_egui = "0.20.2"
 bevy-inspector-egui = "0.18.3"
 bevy_pkv = "0.7.0"
 bevy_pancam = "0.8.0"
+bevy_rapier2d = "0.21.0"
 leafwing-input-manager = "0.9.1"
-noisy_bevy = "0.3.0"
 fastrand = "1.9.0"
 pathfinding = "4.2.1"
 image = "0.24.6"

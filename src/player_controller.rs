@@ -29,3 +29,6 @@ fn player_movement(
         trans.translation += vel.extend(0.0);
     }
 }
+
+fn cast_magic() {
+}

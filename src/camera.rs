@@ -1,6 +1,5 @@
 use crate::{player::Player, GameState, WIN_HEIGHT};
 use bevy::{prelude::*, render::camera::ScalingMode};
-use bevy_inspector_egui::egui::lerp;
 use bevy_pancam::{PanCam, PanCamPlugin};
 
 pub struct CameraPlugin;

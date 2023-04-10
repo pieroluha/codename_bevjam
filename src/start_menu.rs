@@ -55,18 +55,18 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
     })
     .insert(StartMenu)
     //###
-    //### ENDER
+    //### THE 
     //###
     .with_children(|ui| {
         ui.spawn(
             // Create a TextBundle that has a Text with a single section.
             TextBundle::from_section(
                 // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "Ender",
+                "THE",
                 TextStyle {
                     font: fonts.slk_norm.clone(),
                     font_size: 80.0,
-                    color: red,
+                    color: white,
                 },
             ) // Set the alignment of the Text
             .with_text_alignment(TextAlignment::Center)
@@ -88,41 +88,18 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         );
     })
     //###
-    //### OF
+    //### CONCOCTER 
     //###
     .with_children(|ui| {
         ui.spawn(
             // Create a TextBundle that has a Text with a single section.
             TextBundle::from_section(
                 // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "OF",
+                "CONCOCTER",
                 TextStyle {
                     font: fonts.slk_norm.clone(),
                     font_size: 80.0,
-                    color: white,
-                },
-            ) // Set the alignment of the Text
-            .with_text_alignment(TextAlignment::Center)
-            // Set the style of the TextBundle itself.
-            .with_style(Style {
-                position_type: PositionType::Relative,
-                ..default()
-            }),
-        );
-    })
-    //###
-    //### TIME
-    //###
-    .with_children(|ui| {
-        ui.spawn(
-            // Create a TextBundle that has a Text with a single section.
-            TextBundle::from_section(
-                // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                "TIME",
-                TextStyle {
-                    font: fonts.slk_norm.clone(),
-                    font_size: 80.0,
-                    color: gray,
+                    color: red,
                 },
             ) // Set the alignment of the Text
             .with_text_alignment(TextAlignment::Center)
@@ -213,11 +190,11 @@ struct TimeColors([Color; 5]);
 impl Default for TimeColors {
     fn default() -> Self {
         Self([
-            Color::hex("#303840").unwrap(),
-            Color::hex("#3d424d").unwrap(),
-            Color::hex("#4b4d57").unwrap(),
-            Color::hex("#5d5d66").unwrap(),
-            Color::hex("#6e6d73").unwrap(),
+            Color::hex("#9a0e0e").unwrap(),
+            Color::hex("#a62219").unwrap(),
+            Color::hex("#b33c24").unwrap(),
+            Color::hex("#bd4926").unwrap(),
+            Color::hex("#cc6633").unwrap(),
         ])
     }
 }
