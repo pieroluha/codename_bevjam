@@ -1,16 +1,21 @@
+use crate::{GameState, InitNewStatus};
 use bevy::prelude::*;
 use image::{Rgba, RgbaImage};
 
 pub struct BackgroundPlugin;
 impl Plugin for BackgroundPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(build_background);
+        app.add_system(build_background.in_schedule(OnEnter(GameState::InitNew)));
     }
 }
 
 const TEXTURE_SIDE: u32 = 2048;
 
-fn build_background(mut cmds: Commands, mut imgs: ResMut<Assets<Image>>) {
+fn build_background(
+    mut cmds: Commands,
+    mut imgs: ResMut<Assets<Image>>,
+    mut init_new_status: ResMut<InitNewStatus>,
+) {
     let bg_colors = [
         Color::hex("#0c0d0c").unwrap(),
         Color::hex("#171a17").unwrap(),
@@ -44,4 +49,6 @@ fn build_background(mut cmds: Commands, mut imgs: ResMut<Assets<Image>>) {
         texture: bg_handle,
         ..default()
     });
+
+    init_new_status.background_ok = true;
 }

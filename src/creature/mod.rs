@@ -18,7 +18,7 @@ pub mod stats {
 }
 
 pub use creature_assets::CreatureAssets;
-pub use creature_bundle::{CreatureBundle, EnemyBundle, Creature};
+pub use creature_bundle::{CreatureBundle, EnemyBundle, Creature, AnimationTimer};
 // pub use creature_shader::{CreatureMaterial, CreatureMaterialHandle, CreatureMesh};
 
 pub struct CreaturePlugins;

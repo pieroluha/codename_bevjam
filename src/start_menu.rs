@@ -193,7 +193,7 @@ fn sm_button_logic(
                     text.sections[0].style.color = Color::hex("#e5e5e6").unwrap();
                 }
             }
-            Interaction::Clicked => next_state.set(GameState::Playing),
+            Interaction::Clicked => next_state.set(GameState::InitNew),
             Interaction::Hovered => {
                 for (_, mut text) in que_butt_texts.iter_mut() {
                     text.sections[0].style.color = Color::hex("#a62219").unwrap();

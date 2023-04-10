@@ -11,12 +11,13 @@ impl Plugin for CreatureAssetsPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct CreatureAssets {
-    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 2, rows = 1))]
+    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 3, rows = 1))]
     #[asset(path = "graphics/shroom_guy.png")]
     pub player: Handle<TextureAtlas>,
-    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 2, rows = 1))]
+    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 3, rows = 1))]
     #[asset(path = "graphics/mastahpiece.png")]
     pub enemy: Handle<TextureAtlas>,
+    #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 8, rows = 1))]
     #[asset(path = "graphics/shroom_axe.png")]
-    pub shroom_axe: Handle<Image>
+    pub shroom_axe: Handle<TextureAtlas>
 }

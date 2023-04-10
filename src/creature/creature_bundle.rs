@@ -22,7 +22,7 @@ pub struct PhysicalDamage(pub f32);
 #[derive(Component)]
 pub struct MagicalDamage(pub f32);
 #[derive(Component, Deref, DerefMut)]
-pub struct AnimationTimer(Timer);
+pub struct AnimationTimer(pub Timer);
 
 #[derive(Bundle)]
 pub struct CreatureBundle {

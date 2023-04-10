@@ -14,6 +14,7 @@ mod player_controller;
 mod potions;
 mod projectile;
 mod start_menu;
+mod game_ui;
 
 pub const WIN_WIDTH: f32 = 1280.0;
 pub const WIN_HEIGHT: f32 = 720.0;
@@ -30,12 +31,11 @@ pub enum GameState {
     GameOver,
 }
 
-// #[derive(Resource, Default)]
-// pub struct InitNewStatus {
-//     background_ok: bool,
-//     player_ok: bool,
-//     enemy_ok: bool,
-// }
+#[derive(Resource, Default)]
+pub struct InitNewStatus {
+    background_ok: bool,
+    player_ok: bool,
+}
 
 fn main() {
     let mut app = App::new();
@@ -62,7 +62,8 @@ fn main() {
     )
     .add_collection_to_loading_state::<_, FontAssets>(GameState::Startup);
 
-    app.add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+    app.init_resource::<InitNewStatus>()
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(camera::CameraPlugin)
         .add_plugin(fps::FpsPlugin)
@@ -72,9 +73,11 @@ fn main() {
         .add_plugin(player::PlayerPlugin)
         .add_plugin(player_controller::PlayerControllerPlugin)
         .add_plugin(enemy::EnemyPlugin)
-        .add_plugin(collision::CollisionPlugin);
+        .add_plugin(collision::CollisionPlugin)
+        .add_plugin(potions::PotionPlugin);
 
-    app.add_system(no_gravity.in_schedule(OnEnter(GameState::StartMenu)));
+    app.add_system(no_gravity.in_schedule(OnEnter(GameState::StartMenu)))
+        .add_system(check_init.in_set(OnUpdate(GameState::InitNew)));
 
     app.run()
 }
@@ -95,3 +98,8 @@ pub fn get_direction(from: Vec2, to: Vec2) -> Vec2 {
     (to - from).normalize()
 }
 
+fn check_init(init_new_status: Res<InitNewStatus>, mut next_state: ResMut<NextState<GameState>>) {
+    if init_new_status.background_ok && init_new_status.player_ok {
+        next_state.set(GameState::Playing);
+    }
+}
