@@ -1,4 +1,4 @@
-use crate::GameState;
+use crate::{FontAssets, GameState};
 use bevy::prelude::*;
 
 pub struct PotionPlugin;
@@ -12,6 +12,7 @@ impl Plugin for PotionPlugin {
     }
 }
 
+// TODO: Numerical values
 pub struct Potion {
     pub good: Effect,
     pub bad: Effect,
@@ -19,6 +20,15 @@ pub struct Potion {
 impl Potion {
     fn new(good: Effect, bad: Effect) -> Self {
         Self { good, bad }
+    }
+
+    fn get_name(&self) -> &str {
+        match self.good {
+            Effect::Regen => "Regen",
+            Effect::Health => "Health",
+            Effect::Speed => "Speed",
+            Effect::PhysicalDamage => "Damage",
+        }
     }
 }
 
@@ -76,6 +86,87 @@ impl Default for ChosenPotion {
     }
 }
 
+#[derive(Component)]
+struct PickPotionUi;
+
+fn pick_potion_ui(fonts: Res<FontAssets>, potion_choices: Res<PotionChoices>, mut cmds: Commands) {
+    let white = Color::hex("#e5e5e6").unwrap();
+    let mut black = Color::hex("#0c0d0c").unwrap();
+    black.set_a(0.5);
+
+    cmds.spawn(NodeBundle {
+        style: Style {
+            // fill the entire window
+            size: Size::all(Val::Percent(100.)),
+            flex_direction: FlexDirection::Row,
+            align_items: AlignItems::Center,
+            ..Default::default()
+        },
+        background_color: BackgroundColor(black),
+        ..Default::default()
+    })
+    .insert(PickPotionUi)
+    // First P
+    .with_children(|ui| {
+        ui.spawn(ButtonBundle {
+            style: Style {
+                size: Size::new(Val::Px(150.0), Val::Px(65.0)),
+                // horizontally center child text
+                justify_content: JustifyContent::Center,
+                // vertically center child text
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            background_color: BackgroundColor(Color::NONE),
+            ..default()
+        })
+        // First P TEXT
+        .with_children(|ui| {
+            ui.spawn(
+                TextBundle::from_section(
+                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                    format!("Potion of {}", potion_choices.first.get_name()),
+                    TextStyle {
+                        font: fonts.slk_norm.clone(),
+                        font_size: 64.0,
+                        color: white,
+                    },
+                ) // Set the alignment of the Text
+                .with_text_alignment(TextAlignment::Center),
+            );
+        });
+    })
+    // Second P
+    .with_children(|ui| {
+        ui.spawn(ButtonBundle {
+            style: Style {
+                size: Size::new(Val::Px(150.0), Val::Px(65.0)),
+                // horizontally center child text
+                justify_content: JustifyContent::Center,
+                // vertically center child text
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            background_color: BackgroundColor(Color::NONE),
+            ..default()
+        })
+        // Second P TEXT
+        .with_children(|ui| {
+            ui.spawn(
+                TextBundle::from_section(
+                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
+                    format!("Potion of {}", potion_choices.second.get_name()),
+                    TextStyle {
+                        font: fonts.slk_norm.clone(),
+                        font_size: 64.0,
+                        color: white,
+                    },
+                ) // Set the alignment of the Text
+                .with_text_alignment(TextAlignment::Center),
+            );
+        });
+    });
+}
 
 #[derive(Clone)]
 pub enum Effect {
@@ -83,6 +174,9 @@ pub enum Effect {
     Health,
     Speed,
     PhysicalDamage,
+}
+
+impl Effect {
 }
 
 #[derive(Resource)]

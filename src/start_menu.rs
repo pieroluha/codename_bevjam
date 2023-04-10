@@ -55,7 +55,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
     })
     .insert(StartMenu)
     //###
-    //### THE 
+    //### THE
     //###
     .with_children(|ui| {
         ui.spawn(
@@ -88,7 +88,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         );
     })
     //###
-    //### CONCOCTER 
+    //### CONCOCTER
     //###
     .with_children(|ui| {
         ui.spawn(
@@ -116,7 +116,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
         .insert(UiTextTime::default());
     })
     //###
-    //### NEW GAME BUTTON
+    //### PLAY BUTTON
     //###
     .with_children(|ui| {
         ui.spawn(ButtonBundle {
@@ -146,41 +146,7 @@ fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
                 ) // Set the alignment of the Text
                 .with_text_alignment(TextAlignment::Center),
             )
-            .insert(StartMenuText("NewGame".to_string()));
-        });
-    })
-    //###
-    //### LOAD GAME BUTTON
-    //###
-    .with_children(|ui| {
-        ui.spawn(ButtonBundle {
-            style: Style {
-                size: Size::new(Val::Px(150.0), Val::Px(65.0)),
-                // horizontally center child text
-                justify_content: JustifyContent::Center,
-                // vertically center child text
-                align_items: AlignItems::Center,
-                ..default()
-            },
-            background_color: BackgroundColor(Color::NONE),
-            ..default()
-        })
-        .insert(StartMenuButton(ButtType::LoadGame))
-        // LG BUTTON TEXT
-        .with_children(|ui| {
-            ui.spawn(
-                TextBundle::from_section(
-                    // Accepts a `String` or any type that converts into a `String`, such as `&str`
-                    "LOAD GAME",
-                    TextStyle {
-                        font: fonts.slk_norm.clone(),
-                        font_size: 32.0,
-                        color: white,
-                    },
-                ) // Set the alignment of the Text
-                .with_text_alignment(TextAlignment::Center),
-            )
-            .insert(StartMenuText("LoadGame".to_string()));
+            .insert(StartMenuText("Play".to_string()));
         });
     });
 }
@@ -227,31 +193,17 @@ fn sm_button_logic(
                     text.sections[0].style.color = Color::hex("#e5e5e6").unwrap();
                 }
             }
-            Interaction::Clicked => match butt_type.0 {
-                ButtType::NewGame => next_state.set(GameState::Playing),
-                ButtType::LoadGame => {
-                    println!("Load Game clicked!");
+            Interaction::Clicked => next_state.set(GameState::Playing),
+            Interaction::Hovered => {
+                for (_, mut text) in que_butt_texts.iter_mut() {
+                    text.sections[0].style.color = Color::hex("#a62219").unwrap();
                 }
-            },
-            Interaction::Hovered => match butt_type.0 {
-                ButtType::NewGame => {
-                    for (bt, mut text) in que_butt_texts.iter_mut() {
-                        if bt.0 == "NewGame" {
-                            text.sections[0].style.color = Color::hex("#a62219").unwrap();
-                        }
-                    }
-                }
-                ButtType::LoadGame => {
-                    for (bt, mut text) in que_butt_texts.iter_mut() {
-                        if bt.0 == "LoadGame" {
-                            text.sections[0].style.color = Color::hex("#a62219").unwrap();
-                        }
-                    }
-                }
-            },
+            }
         };
     }
 }
+
+// text.sections[0].style.color = Color::hex("#a62219").unwrap();
 
 fn clean_up_sm(que_start_menu: Query<Entity, With<StartMenu>>, mut cmds: Commands) {
     let start_menu = que_start_menu.single();
