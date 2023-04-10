@@ -2,6 +2,7 @@ use crate::creature::{CreatureAssets, CreatureBundle};
 use crate::GameState;
 use crate::player_controller::PlayerAction;
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::RigidBody;
 // use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
@@ -44,8 +45,10 @@ fn spawn_player(cre_ass: Res<CreatureAssets>, mut cmds: Commands) {
         sprite_sheet,
     ))
     .insert(Player)
+    .insert(RigidBody::KinematicPositionBased)
     .insert(InputManagerBundle {
         action_state: ActionState::default(),
         input_map,
     });
+
 }

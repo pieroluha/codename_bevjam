@@ -1,6 +1,8 @@
-use crate::creature::{CreatureAssets, EnemyBundle};
+use crate::creature::{stats::*, CreatureAssets, EnemyBundle};
+use crate::player::Player;
 use crate::GameState;
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 pub struct EnemyPlugin;
 impl Plugin for EnemyPlugin {
@@ -12,7 +14,8 @@ impl Plugin for EnemyPlugin {
             .add_system(spawn_timer.in_set(OnUpdate(GameState::Playing)))
             .add_system(count_enemies.in_set(OnUpdate(GameState::Playing)))
             .add_system(spawn_enemies.in_set(OnUpdate(GameState::Playing)))
-            .add_system(set_spawn.in_set(OnUpdate(GameState::Playing)));
+            .add_system(set_spawn.in_set(OnUpdate(GameState::Playing)))
+            .add_system(hunt_player.in_set(OnUpdate(GameState::Playing)));
     }
 }
 
@@ -105,7 +108,7 @@ fn spawn_enemies(
             batch.push(EnemyBundle::new(
                 100.0 * power_mult.0,
                 100.0 * power_mult.0,
-                100.0 * power_mult.0,
+                (100.0 - (fastrand::f32() * 10.0)) * power_mult.0,
                 0.5,
                 0.5,
                 10.0,
@@ -118,9 +121,10 @@ fn spawn_enemies(
     }
 }
 
-fn set_spawn(mut que_enemies: Query<(&mut Transform, Entity), With<NewEnemy>>, mut cmds: Commands) {
-    for (mut enemy, entity) in que_enemies.iter_mut() {
+fn set_spawn(mut que_enemies: Query<(&mut Transform, &mut Velocity, Entity), With<NewEnemy>>, mut cmds: Commands) {
+    for (mut enemy, mut vel, entity) in que_enemies.iter_mut() {
         enemy.translation = SPAWN_LOC[fastrand::usize(..SPAWN_LOC.len())].extend(1.0);
+        vel.linvel = Vec2::ZERO;
         cmds.entity(entity).remove::<NewEnemy>();
     }
 }
@@ -131,4 +135,29 @@ fn count_enemies(que_enemies: Query<&Enemy>, mut enemy_count: ResMut<EnemyCount>
         count += 1;
     }
     enemy_count.0 = count;
+}
+
+fn hunt_player(
+    time: Res<Time>,
+    que_player: Query<&Transform, (With<Player>, Without<Enemy>)>,
+    mut que_enemies: Query<(&mut Velocity, &Transform,  &Speed), (With<Enemy>, Without<Player>)>,
+) {
+    let player = que_player.single();
+    for (mut vel, enemy, speed) in que_enemies.iter_mut() {
+        let target_pos = player.translation.truncate();
+        // let pos = enemy.translation.truncate();
+        let pos = enemy.translation.truncate();
+        // let move_dir = get_direction(pos, target_pos);
+        // enemy.translation += (move_dir * speed.0 * time.delta_seconds()).extend(1.0);
+        
+        let move_dir = get_direction(pos, target_pos);
+
+       vel.linvel = move_dir * speed.0;
+    }
+    // let vel = move_dir * speed.0 * time.delta_seconds();
+    // trans.translation += vel.extend(0.0);
+}
+
+fn get_direction(from: Vec2, to: Vec2) -> Vec2 {
+    (to - from).normalize()
 }

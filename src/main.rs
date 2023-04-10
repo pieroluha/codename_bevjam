@@ -71,6 +71,8 @@ fn main() {
         .add_plugin(player_controller::PlayerControllerPlugin)
         .add_plugin(enemy::EnemyPlugin);
 
+    app.add_system(no_gravity.in_schedule(OnEnter(GameState::StartMenu)));
+
     app.run()
 }
 
@@ -80,4 +82,8 @@ pub struct FontAssets {
     pub slk_norm: Handle<Font>,
     #[asset(path = "fonts/slkscrb.ttf")]
     pub slk_bold: Handle<Font>,
+}
+
+fn no_gravity(mut rapier_config: ResMut<RapierConfiguration>) {
+    rapier_config.gravity = Vec2::ZERO;
 }

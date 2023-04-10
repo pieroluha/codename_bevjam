@@ -79,6 +79,11 @@ pub struct EnemyBundle {
     phys_dam: PhysicalDamage,
     mag_dam: MagicalDamage,
     collider: Collider,
+    rigid_body: RigidBody,
+    locked_axes: LockedAxes,
+    // mass: AdditionalMassProperties,
+    friction: Friction,
+    velocity: Velocity,
     #[bundle]
     sprite_sheet: SpriteSheetBundle,
     anim_timer: AnimationTimer,
@@ -106,6 +111,11 @@ impl EnemyBundle {
             phys_dam: PhysicalDamage(pd),
             mag_dam: MagicalDamage(md),
             collider: Collider::cuboid(CRE_SIZE / 2.0, CRE_SIZE / 2.0),
+            rigid_body: RigidBody::Dynamic,
+            locked_axes: LockedAxes::ROTATION_LOCKED,
+            // mass: AdditionalMassProperties::Mass(1.0),
+            friction: Friction::new(0.2),
+            velocity: Velocity::default(),
             sprite_sheet,
             anim_timer: AnimationTimer(Timer::from_seconds(CRE_ANIM_TIME, TimerMode::Repeating)),
         }
