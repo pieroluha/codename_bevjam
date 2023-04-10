@@ -6,12 +6,13 @@ use bevy_rapier2d::prelude::*;
 mod background;
 mod camera;
 mod creature;
+mod enemy;
 mod fps;
 mod player;
 mod player_controller;
 mod potions;
-mod start_menu;
 mod projectile;
+mod start_menu;
 
 pub const WIN_WIDTH: f32 = 1280.0;
 pub const WIN_HEIGHT: f32 = 720.0;
@@ -59,8 +60,7 @@ fn main() {
     )
     .add_collection_to_loading_state::<_, FontAssets>(GameState::Startup);
 
-    app
-        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+    app.add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(camera::CameraPlugin)
         .add_plugin(fps::FpsPlugin)
@@ -68,7 +68,8 @@ fn main() {
         .add_plugin(background::BackgroundPlugin)
         .add_plugins(creature::CreaturePlugins)
         .add_plugin(player::PlayerPlugin)
-        .add_plugin(player_controller::PlayerControllerPlugin);
+        .add_plugin(player_controller::PlayerControllerPlugin)
+        .add_plugin(enemy::EnemyPlugin);
 
     app.run()
 }

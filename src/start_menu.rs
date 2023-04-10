@@ -40,7 +40,7 @@ struct StartMenuText(String);
 fn start_menu(fonts: Res<FontAssets>, mut cmds: Commands) {
     let red = Color::hex("#a62219").unwrap();
     let white = Color::hex("#e5e5e6").unwrap();
-    let gray = Color::hex("#6e6d73").unwrap();
+    // let gray = Color::hex("#6e6d73").unwrap();
 
     cmds.spawn(NodeBundle {
         style: Style {

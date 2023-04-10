@@ -1,4 +1,8 @@
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
+use super::creature_anim::CRE_ANIM_TIME;
+use super::CRE_SIZE;
+use crate::enemy::{Enemy, NewEnemy};
+use bevy::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 #[derive(Component)]
 pub struct Creature;
@@ -17,19 +21,23 @@ pub struct ManaRegen(pub f32);
 pub struct PhysicalDamage(pub f32);
 #[derive(Component)]
 pub struct MagicalDamage(pub f32);
+#[derive(Component, Deref, DerefMut)]
+pub struct AnimationTimer(Timer);
 
 #[derive(Bundle)]
 pub struct CreatureBundle {
-    pub marker: Creature,
-    pub health: Health,
-    pub mana: Mana,
-    pub speed: Speed,
-    pub regen: Regen,
-    pub mana_regen: ManaRegen,
-    pub phys_dam: PhysicalDamage,
-    pub mag_dam: MagicalDamage,
+    marker: Creature,
+    health: Health,
+    mana: Mana,
+    speed: Speed,
+    regen: Regen,
+    mana_regen: ManaRegen,
+    phys_dam: PhysicalDamage,
+    mag_dam: MagicalDamage,
+    collider: Collider,
     #[bundle]
-    pub sprite_sheet: SpriteSheetBundle,
+    sprite_sheet: SpriteSheetBundle,
+    anim_timer: AnimationTimer,
 }
 impl CreatureBundle {
     pub fn new(
@@ -51,7 +59,55 @@ impl CreatureBundle {
             mana_regen: ManaRegen(mr),
             phys_dam: PhysicalDamage(pd),
             mag_dam: MagicalDamage(md),
+            collider: Collider::cuboid(CRE_SIZE / 2.0, CRE_SIZE / 2.0),
             sprite_sheet,
+            anim_timer: AnimationTimer(Timer::from_seconds(CRE_ANIM_TIME, TimerMode::Repeating)),
+        }
+    }
+}
+
+#[derive(Bundle)]
+pub struct EnemyBundle {
+    marker: Creature,
+    enemy: Enemy,
+    new: NewEnemy,
+    health: Health,
+    mana: Mana,
+    speed: Speed,
+    regen: Regen,
+    mana_regen: ManaRegen,
+    phys_dam: PhysicalDamage,
+    mag_dam: MagicalDamage,
+    collider: Collider,
+    #[bundle]
+    sprite_sheet: SpriteSheetBundle,
+    anim_timer: AnimationTimer,
+}
+impl EnemyBundle {
+    pub fn new(
+        h: f32,
+        m: f32,
+        s: f32,
+        r: f32,
+        mr: f32,
+        pd: f32,
+        md: f32,
+        sprite_sheet: SpriteSheetBundle,
+    ) -> Self {
+        Self {
+            marker: Creature,
+            enemy: Enemy,
+            new: NewEnemy,
+            health: Health(h),
+            mana: Mana(m),
+            speed: Speed(s),
+            regen: Regen(r),
+            mana_regen: ManaRegen(mr),
+            phys_dam: PhysicalDamage(pd),
+            mag_dam: MagicalDamage(md),
+            collider: Collider::cuboid(CRE_SIZE / 2.0, CRE_SIZE / 2.0),
+            sprite_sheet,
+            anim_timer: AnimationTimer(Timer::from_seconds(CRE_ANIM_TIME, TimerMode::Repeating)),
         }
     }
 }

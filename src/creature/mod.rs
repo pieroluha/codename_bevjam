@@ -1,10 +1,9 @@
-use bevy::sprite::MaterialMesh2dBundle;
 use bevy::{
     app::PluginGroupBuilder,
     prelude::*,
-    // prelude::{Component, PluginGroup},
 };
 
+mod creature_anim;
 mod creature_assets;
 mod creature_bundle;
 // mod creature_shader;
@@ -18,26 +17,20 @@ pub mod stats {
 }
 
 pub use creature_assets::CreatureAssets;
-pub use creature_bundle::CreatureBundle;
+pub use creature_bundle::{CreatureBundle, EnemyBundle};
 // pub use creature_shader::{CreatureMaterial, CreatureMaterialHandle, CreatureMesh};
 
 pub struct CreaturePlugins;
 impl PluginGroup for CreaturePlugins {
     fn build(self) -> PluginGroupBuilder {
-        PluginGroupBuilder::start::<Self>().add(creature_assets::CreatureAssetsPlugin)
+        PluginGroupBuilder::start::<Self>()
+            .add(creature_assets::CreatureAssetsPlugin)
+            .add(creature_anim::CreatureAnimPlugin)
     }
 }
 
-// pub enum CreatureType {
-//     PlayerBase,
-//     PlayerAttacker,
-//     PlayerDefender,
-//     Attacker,
-//     Defender,
+// #[derive(PartialEq, Eq)]
+// pub enum CreatureFaction {
+//     Player,
+//     Enemy,
 // }
-
-#[derive(PartialEq, Eq)]
-pub enum CreatureFaction {
-    Player,
-    Enemy,
-}

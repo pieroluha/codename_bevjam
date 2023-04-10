@@ -9,6 +9,16 @@ impl Plugin for PlayerControllerPlugin {
     }
 }
 
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
+pub enum PlayerAction {
+    MoveUp,
+    MoveDown,
+    MoveLeft,
+    MoveRight,
+    Melee,
+    Cast,
+}
+
 fn player_movement(
     time: Res<Time>,
     mut que_player: Query<(&mut Transform, &Speed, &ActionState<PlayerAction>), With<Player>>,
@@ -30,5 +40,7 @@ fn player_movement(
     }
 }
 
-fn cast_magic() {
-}
+// TODO:
+// fn cast_magic() {
+// }
+

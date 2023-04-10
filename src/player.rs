@@ -1,7 +1,8 @@
-use crate::creature::{stats::*, CreatureAssets, CreatureBundle, CRE_SIZE};
+use crate::creature::{CreatureAssets, CreatureBundle};
 use crate::GameState;
-use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-use bevy_rapier2d::prelude::*;
+use crate::player_controller::PlayerAction;
+use bevy::prelude::*;
+// use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 pub struct PlayerPlugin;
@@ -14,15 +15,6 @@ impl Plugin for PlayerPlugin {
 
 #[derive(Component)]
 pub struct Player;
-
-#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
-pub enum PlayerAction {
-    MoveUp,
-    MoveDown,
-    MoveLeft,
-    MoveRight,
-    Cast,
-}
 
 fn spawn_player(cre_ass: Res<CreatureAssets>, mut cmds: Commands) {
     let sprite_sheet = SpriteSheetBundle {
@@ -52,7 +44,6 @@ fn spawn_player(cre_ass: Res<CreatureAssets>, mut cmds: Commands) {
         sprite_sheet,
     ))
     .insert(Player)
-    .insert(Collider::cuboid(CRE_SIZE / 2.0, CRE_SIZE / 2.0))
     .insert(InputManagerBundle {
         action_state: ActionState::default(),
         input_map,
