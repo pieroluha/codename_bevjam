@@ -24,8 +24,8 @@ pub enum GameState {
     Startup,
     StartMenu,
     InitNew,
-    InitLoad,
     Playing,
+    PickPotion,
     Paused,
     GameOver,
 }
