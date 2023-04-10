@@ -11,7 +11,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(InputManagerPlugin::<PlayerAction>::default())
             .add_system(spawn_player.in_schedule(OnEnter(GameState::InitNew)))
-            .add_system(shroom_axe_move.in_set(OnUpdate(GameState::Playing)));
+            .add_system(shroom_axe_move.in_set(OnUpdate(GameState::Playing)))
+            .add_system(clean_up_weap.in_schedule(OnEnter(GameState::GameOver)));
     }
 }
 
@@ -53,7 +54,7 @@ fn spawn_player(
         100.0,
         100.0,
         100.0,
-        0.3,
+        0.001,
         0.2,
         20.0,
         10.0,
@@ -99,4 +100,9 @@ impl ShroomAxeBundle {
 fn shroom_axe_move(cursor: ResMut<Cursor>, mut que_axe: Query<&mut Transform, With<PlayerWeapon>>) {
     let mut axe = que_axe.single_mut();
     axe.translation = cursor.0.extend(axe.translation.z);
+}
+
+fn clean_up_weap(que_weap: Query<Entity, With<PlayerWeapon>>, mut cmds: Commands) {
+    let weap = que_weap.single();
+    cmds.entity(weap).despawn_recursive();
 }

@@ -1,3 +1,7 @@
+use crate::creature::stats::*;
+use crate::creature::Creature;
+use crate::enemy::Enemy;
+use crate::player::Player;
 use crate::{FontAssets, GameState, WIN_HEIGHT, WIN_WIDTH};
 use bevy::prelude::*;
 
@@ -11,7 +15,10 @@ impl Plugin for PotionPlugin {
             .add_system(potion_timer.in_set(OnUpdate(GameState::Playing)))
             .add_system(pick_potion_ui.in_schedule(OnEnter(GameState::PickPotion)))
             .add_system(potion_button_logic.in_set(OnUpdate(GameState::PickPotion)))
-            .add_system(clean_up_pot_ui.in_schedule(OnExit(GameState::PickPotion)));
+            .add_system(clean_up_pot_ui.in_schedule(OnExit(GameState::PickPotion)))
+            .add_system(potion_effect_player.in_schedule(OnExit(GameState::PickPotion)))
+            .add_system(potion_effect_enemies.in_schedule(OnExit(GameState::PickPotion)))
+            .add_system(regen_creatures.in_set(OnUpdate(GameState::Playing)));
     }
 }
 
@@ -37,7 +44,7 @@ impl Potion {
 }
 
 #[derive(Resource)]
-pub struct PotionTimer(Timer);
+pub struct PotionTimer(pub Timer);
 impl Default for PotionTimer {
     fn default() -> Self {
         Self(Timer::from_seconds(10.0, TimerMode::Repeating))
@@ -233,7 +240,70 @@ fn clean_up_pot_ui(que_pot: Query<Entity, With<PickPotionUi>>, mut cmds: Command
     cmds.entity(pot).despawn_recursive();
 }
 
-#[derive(Clone)]
+fn potion_effect_player(
+    chosen_potion: Res<ChosenPotion>,
+    mut que_player: Query<
+        (&mut Health, &mut Speed, &mut Regen, &mut PhysicalDamage),
+        (With<Player>, Without<Enemy>),
+    >,
+) {
+    let (mut health, mut speed, mut regen, mut damage) = que_player.single_mut();
+    match chosen_potion.chosen.good.0 {
+        Effect::Regen => regen.0 = (regen.0 + chosen_potion.chosen.good.1 as f32 * 0.05).max(0.0),
+        Effect::Speed => speed.0 = (speed.0 + chosen_potion.chosen.good.1 as f32).max(0.0),
+        Effect::Health => health.0 += chosen_potion.chosen.good.1 as f32,
+        Effect::PhysicalDamage => {
+            damage.0 = (damage.0 + chosen_potion.chosen.good.1 as f32).max(5.0)
+        }
+    }
+    match chosen_potion.chosen.bad.0 {
+        Effect::Regen => regen.0 = (regen.0 + chosen_potion.chosen.bad.1 as f32 * 0.05).max(0.0),
+        Effect::Speed => speed.0 = (speed.0 + chosen_potion.chosen.bad.1 as f32).max(0.0),
+        Effect::Health => health.0 += chosen_potion.chosen.bad.1 as f32,
+        Effect::PhysicalDamage => {
+            damage.0 = (damage.0 + chosen_potion.chosen.bad.1 as f32).max(5.0)
+        }
+    }
+}
+
+fn potion_effect_enemies(
+    chosen_potion: Res<ChosenPotion>,
+    mut que_enemies: Query<
+        (&mut Health, &mut Speed, &mut Regen, &mut PhysicalDamage),
+        (With<Enemy>, Without<Player>),
+    >,
+) {
+    for (mut health, mut speed, mut regen, mut damage) in que_enemies.iter_mut() {
+        match chosen_potion.unchosen.good.0 {
+            Effect::Regen => {
+                regen.0 = (regen.0 + chosen_potion.unchosen.good.1 as f32 * 0.003).max(0.0)
+            }
+            Effect::Speed => speed.0 = (speed.0 + chosen_potion.unchosen.good.1 as f32).max(0.0),
+            Effect::Health => health.0 += chosen_potion.unchosen.good.1 as f32,
+            Effect::PhysicalDamage => {
+                damage.0 = (damage.0 + chosen_potion.unchosen.good.1 as f32).max(5.0)
+            }
+        }
+        match chosen_potion.unchosen.bad.0 {
+            Effect::Regen => {
+                regen.0 = (regen.0 + chosen_potion.unchosen.bad.1 as f32 * 0.003).max(0.0)
+            }
+            Effect::Speed => speed.0 = (speed.0 + chosen_potion.unchosen.bad.1 as f32).max(0.0),
+            Effect::Health => health.0 += chosen_potion.unchosen.bad.1 as f32,
+            Effect::PhysicalDamage => {
+                damage.0 = (damage.0 + chosen_potion.unchosen.bad.1 as f32).max(5.0)
+            }
+        }
+    }
+}
+
+fn regen_creatures(mut que_cre: Query<(&mut Health, &Regen), With<Creature>>) {
+    for (mut health, regen) in que_cre.iter_mut() {
+        health.0 += regen.0;
+    }
+}
+
+#[derive(Clone, PartialEq, Eq)]
 pub enum Effect {
     Regen,
     Health,

@@ -110,7 +110,7 @@ fn spawn_enemies(
                 100.0 * power_mult.0,
                 100.0 * power_mult.0,
                 (100.0 - (fastrand::f32() * 10.0)) * power_mult.0,
-                0.5,
+                0.001,
                 0.5,
                 10.0,
                 10.0,

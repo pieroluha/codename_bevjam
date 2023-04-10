@@ -36,3 +36,4 @@ fn clean_creatures(que_cre: Query<Entity, With<Creature>>, mut cmds: Commands) {
         cmds.entity(cre).despawn_recursive()
     }
 }
+

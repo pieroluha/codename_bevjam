@@ -19,5 +19,9 @@ pub struct CreatureAssets {
     pub enemy: Handle<TextureAtlas>,
     #[asset(texture_atlas(tile_size_x = 16.0, tile_size_y = 16.0, columns = 8, rows = 1))]
     #[asset(path = "graphics/shroom_axe.png")]
-    pub shroom_axe: Handle<TextureAtlas>
+    pub shroom_axe: Handle<TextureAtlas>,
+    #[asset(path = "graphics/heart.png")]
+    pub heart: Handle<Image>,
+    #[asset(path = "graphics/potion.png")]
+    pub potion: Handle<Image>,
 }

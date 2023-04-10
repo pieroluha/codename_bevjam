@@ -9,12 +9,12 @@ mod collision;
 mod creature;
 mod enemy;
 mod fps;
+mod game_ui;
 mod player;
 mod player_controller;
 mod potions;
-mod projectile;
+mod sounds;
 mod start_menu;
-mod game_ui;
 
 pub const WIN_WIDTH: f32 = 1280.0;
 pub const WIN_HEIGHT: f32 = 720.0;
@@ -55,7 +55,7 @@ fn main() {
             .set(ImagePlugin::default_nearest()),
     )
     .insert_resource(ClearColor(Color::hex("#0c0d0c").unwrap()))
-    .add_plugin(WorldInspectorPlugin::default())
+    // .add_plugin(WorldInspectorPlugin::default())
     .add_state::<GameState>()
     .add_loading_state(
         LoadingState::new(GameState::Startup).continue_to_state(GameState::StartMenu),
@@ -64,9 +64,9 @@ fn main() {
 
     app.init_resource::<InitNewStatus>()
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
-        .add_plugin(RapierDebugRenderPlugin::default())
+        // .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(camera::CameraPlugin)
-        .add_plugin(fps::FpsPlugin)
+        // .add_plugin(fps::FpsPlugin)
         .add_plugin(start_menu::StartMenuPlugin)
         .add_plugin(background::BackgroundPlugin)
         .add_plugins(creature::CreaturePlugins)
@@ -74,7 +74,9 @@ fn main() {
         .add_plugin(player_controller::PlayerControllerPlugin)
         .add_plugin(enemy::EnemyPlugin)
         .add_plugin(collision::CollisionPlugin)
-        .add_plugin(potions::PotionPlugin);
+        .add_plugin(potions::PotionPlugin)
+        .add_plugin(game_ui::GameUIPlugin)
+        .add_plugin(sounds::SoundsPlugin);
 
     app.add_system(no_gravity.in_schedule(OnEnter(GameState::StartMenu)))
         .add_system(check_init.in_set(OnUpdate(GameState::InitNew)));
@@ -99,7 +101,7 @@ pub fn get_direction(from: Vec2, to: Vec2) -> Vec2 {
 }
 
 fn check_init(init_new_status: Res<InitNewStatus>, mut next_state: ResMut<NextState<GameState>>) {
-    if init_new_status.background_ok && init_new_status.player_ok {
+    if init_new_status.player_ok {
         next_state.set(GameState::Playing);
     }
 }

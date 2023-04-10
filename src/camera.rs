@@ -1,6 +1,10 @@
 use crate::{player::Player, GameState, WIN_HEIGHT};
-use bevy::{prelude::*, render::camera::ScalingMode, window::PrimaryWindow};
-use bevy_pancam::{PanCam, PanCamPlugin};
+use bevy::{
+    prelude::*,
+    render::camera::ScalingMode,
+    window::{CursorGrabMode, PrimaryWindow},
+};
+// use bevy_pancam::{PanCam, PanCamPlugin};
 
 pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
@@ -10,7 +14,8 @@ impl Plugin for CameraPlugin {
             .init_resource::<Cursor>()
             .add_system(spawn_camera.in_schedule(OnEnter(GameState::Startup)))
             .add_system(mouse_pos.in_set(OnUpdate(GameState::Playing)))
-            .add_system(camera_follow.in_set(OnUpdate(GameState::Playing)));
+            .add_system(camera_follow.in_set(OnUpdate(GameState::Playing)))
+            .add_system(grab_mouse.on_startup());
     }
 }
 
@@ -63,5 +68,24 @@ fn mouse_pos(
             .viewport_to_world_2d(global_trans, cursor_pos)
             .unwrap_or_default();
         // println!("{:#?}", cursor_pos);
+    }
+}
+// This system grabs the mouse when the left mouse button is pressed
+// and releases it when the escape key is pressed
+fn grab_mouse(
+    mut windows: Query<&mut Window>,
+    mouse: Res<Input<MouseButton>>,
+    key: Res<Input<KeyCode>>,
+) {
+    let mut window = windows.single_mut();
+
+    if mouse.just_pressed(MouseButton::Left) {
+        window.cursor.visible = false;
+        window.cursor.grab_mode = CursorGrabMode::Locked;
+    }
+
+    if key.just_pressed(KeyCode::Escape) {
+        window.cursor.visible = true;
+        window.cursor.grab_mode = CursorGrabMode::None;
     }
 }
